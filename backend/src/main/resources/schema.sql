@@ -1,0 +1,63 @@
+-- 创建用户表
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    role VARCHAR(20) DEFAULT 'USER',
+    status INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted BOOLEAN DEFAULT FALSE
+);
+
+-- 创建客户表
+CREATE TABLE IF NOT EXISTS customers (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    customer_number VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    id_card_number VARCHAR(50) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL UNIQUE,
+    email VARCHAR(100),
+    address TEXT,
+    risk_level INT DEFAULT 0,
+    customer_type INT DEFAULT 0,
+    status INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted BOOLEAN DEFAULT FALSE
+);
+
+-- 创建账户表
+CREATE TABLE IF NOT EXISTS accounts (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    account_number VARCHAR(50) NOT NULL UNIQUE,
+    customer_id BIGINT NOT NULL,
+    account_type INT NOT NULL,
+    balance DECIMAL(15,2) DEFAULT 0.00,
+    currency VARCHAR(3) DEFAULT 'CNY',
+    status INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+-- 创建交易表
+CREATE TABLE IF NOT EXISTS transactions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    transaction_number VARCHAR(50) NOT NULL UNIQUE,
+    from_account_id BIGINT NOT NULL,
+    to_account_id BIGINT NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    currency VARCHAR(3) DEFAULT 'CNY',
+    transaction_type INT,
+    status INT DEFAULT 0,
+    description TEXT,
+    transaction_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (from_account_id) REFERENCES accounts(id),
+    FOREIGN KEY (to_account_id) REFERENCES accounts(id)
+);
